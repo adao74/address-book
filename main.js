@@ -1,4 +1,5 @@
 let users = [];
+let condition = [];
 
 window.onload = function() {
     getUsers()
@@ -10,7 +11,14 @@ const getUsers = () => {
     .then(res => res.json())
     .then(res => {
         //console.log(res); // get the response schema
-        // users.push(res); // not needed anymore b/c you are fetching multiple users at a time and they are returned in an array
+        // users.push(res); // not needed anymore b/c you are fetching multiple users at a time and they are returned in an array (res.results)
+        res.results.sort( (a,b) => a.name.first.localeCompare(b.name.first)) // sort users alphabetically by first name
+
+        // Create a condition array that holds a value for each user you fetched. Set the value to false.
+        for (let i = 0; i < res.results.length; i++) {
+            condition[i] = false
+        }
+
         displayNamePicture(res.results)
     })
 }
@@ -31,41 +39,63 @@ const displayNamePicture = (resultsArray) => {
 
         const newButton = document.createElement("button")
         newButton.innerText = "Click for more"
-        newButton.id = `id${index}`
+        // newButton.id = `id${index}`
         document.getElementById("users").appendChild(newElement)
         document.getElementById("users").appendChild(newButton)
         newButton.addEventListener("click", (event) => {
             event.preventDefault();
-            newElement.innerText = `User #${index + 1}:` // get rid of existing name/picture info so doesn't repeat in the innerText
-            display(newElement, user)
-            document.getElementById("users").removeChild(document.getElementById(`id${index}`)) // get rid of itself (the button) after you click it
+            changeButtonState(newElement, newButton, index, user)
         });
 
     })
 }
 
-const display = (newElement, user) => {
+
+
+// change button behavior after you click it
+const changeButtonState = (newElement, newButton, index, user) => {
+    if (!condition[index]) {
+        newElement.innerText = `User #${index + 1}:` // get rid of existing name/picture info so doesn't repeat in the innerText
+        displayAllProperties(newElement, user)
+        hideButton(newButton)
+        condition[index] = true
+    } else {
+        hideProperties(newElement, index, user)
+        displayButton(newButton)
+        condition[index] = false
+    }
+} 
+
+// Display the "hide button"
+const hideButton = (newButton) => {
+    newButton.innerText = "Hide more"
+}
+
+// Display the "display button"
+const displayButton = (newButton) => {
+    newButton.innerText = "Click for more"
+}
+
+// Display all user properties 
+const displayAllProperties = (newElement, user) => {
     
     const userKeys = Object.keys(user) // array of keys
 
-    console.log(userKeys)
-
-    for (let i = 0; i < userKeys.length; i++) {
-        if ( (typeof user[userKeys[i]] != "object") || (user[userKeys[i]] == null) || (user[userKeys[i]] == undefined) ) {
-            console.log(`String key: ${userKeys[i]}: ${user[userKeys[i]]}`)
-            newElement.innerText = `${newElement.innerText} \n ${userKeys[i]}: ${user[userKeys[i]]}`
+    userKeys.forEach( key => {
+        if ( (typeof user[key] != "object") || (user[key] == null) || (user[key] == undefined)) { 
+            // console.log(`String key: ${key}: ${user[key]}`)
+            newElement.innerText = `${newElement.innerText} \n ${key}: ${user[key]}`
         } else {
-            display(newElement, user[userKeys[i]])
+            displayAllProperties(newElement, user[key])
         }
-    }
+    })  
+}
 
-
-    // forEach instead of for loop
-    // userKeys.forEach( key => {
-    //     if (typeof user[key] === "string") { 
-    //         console.log(`String key: ${user[key]}`)
-    //         newElement.innerText = `${newElement.innerText} \n ${key}: ${user[key]}`
-    //         document.getElementById("users").appendChild(newElement)
-    //     }
-    // })  
+// Hide user properties
+const hideProperties = (newElement, index, user) => {
+    newElement.innerText = 
+    `User #${index + 1}: ${user.name.title} ${user.name.first} ${user.name.last}
+    Large picture: ${user.picture.large}
+    Medium picture: ${user.picture.medium}
+    Small picture: ${user.picture.thumbnail}` 
 }
