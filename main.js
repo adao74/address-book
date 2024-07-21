@@ -22,7 +22,13 @@ const displayNamePicture = (resultsArray) => {
     resultsArray.forEach( (user, index) => {
         
         const newElement = document.createElement("p")
-        newElement.innerText = `User #${index + 1}: ${user.name.title} ${user.name.first} ${user.name.last}` 
+
+        newElement.innerText = 
+        `User #${index + 1}: ${user.name.title} ${user.name.first} ${user.name.last}
+        Large picture: ${user.picture.large}
+        Medium picture: ${user.picture.medium}
+        Small picture: ${user.picture.thumbnail}` 
+
         const newButton = document.createElement("button")
         newButton.innerText = "Click for more"
         newButton.id = `id${index}`
@@ -30,8 +36,9 @@ const displayNamePicture = (resultsArray) => {
         document.getElementById("users").appendChild(newButton)
         newButton.addEventListener("click", (event) => {
             event.preventDefault();
+            newElement.innerText = `User #${index + 1}:` // get rid of existing name/picture info so doesn't repeat in the innerText
             display(newElement, user)
-            document.getElementById("users").removeChild(document.getElementById(`id${index}`)) // get rid of the button after you click it
+            document.getElementById("users").removeChild(document.getElementById(`id${index}`)) // get rid of itself (the button) after you click it
         });
 
     })
