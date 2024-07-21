@@ -7,7 +7,7 @@ window.onload = function() {
 
 // Fetches multiple users
 const getUsers = () => {
-    fetch('https://randomuser.me/api?results=2')
+    fetch('https://randomuser.me/api?results=2&nat=au,us,fr,gb&inc=name,picture,cell,dob,phone')
     .then(res => res.json())
     .then(res => {
         //console.log(res); // get the response schema
