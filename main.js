@@ -7,7 +7,7 @@ window.onload = function() {
 
 // Fetches multiple users
 const getUsers = () => {
-    fetch('https://randomuser.me/api?results=2&nat=au,us,fr,gb&inc=name,picture,cell,dob,phone')
+    fetch('https://randomuser.me/api?results=4&nat=au,us,fr,gb&inc=name,picture,cell,dob,phone')
     .then(res => res.json())
     .then(res => {
         //console.log(res); // get the response schema
@@ -30,18 +30,18 @@ const displayNamePicture = (resultsArray) => {
     resultsArray.forEach( (user, index) => {
         
         const newElement = document.createElement("p")
-
-        newElement.innerText = 
-        `User #${index + 1}: ${user.name.title} ${user.name.first} ${user.name.last}
-        Large picture: ${user.picture.large}
-        Medium picture: ${user.picture.medium}
-        Small picture: ${user.picture.thumbnail}` 
-
         const newButton = document.createElement("button")
-        newButton.innerText = "Click for more"
-        // newButton.id = `id${index}`
+
         document.getElementById("users").appendChild(newElement)
         document.getElementById("users").appendChild(newButton)
+
+        hideProperties(newElement, index, user)
+        displayButton(newButton)
+
+        // newButton.id = `id${index}`
+        newElement.style.backgroundColor = `#${Math.floor(Math.random()*16777215).toString(16)}` // generate random color (hex string with a random number)
+        newButton.style.backgroundColor = "pink"
+
         newButton.addEventListener("click", (event) => {
             event.preventDefault();
             changeButtonState(newElement, newButton, index, user)
