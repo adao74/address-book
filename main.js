@@ -25,31 +25,19 @@ const displayNamePicture = (resultsArray) => {
         newElement.innerText = `User #${index + 1}: ${user.name.title} ${user.name.first} ${user.name.last}` 
         const newButton = document.createElement("button")
         newButton.innerText = "Click for more"
+        newButton.id = `id${index}`
         document.getElementById("users").appendChild(newElement)
         document.getElementById("users").appendChild(newButton)
         newButton.addEventListener("click", (event) => {
             event.preventDefault();
-            display(resultsArray)
+            display(newElement, user)
+            document.getElementById("users").removeChild(document.getElementById(`id${index}`)) // get rid of the button after you click it
         });
 
     })
 }
 
-
-const display = (resultsArray) => {
-    console.log(resultsArray)
-    
-    resultsArray.forEach(user => {
-        
-        const newElement = document.createElement("p")
-        stringifyObjects(newElement, user)
-      
-    })
-
-}
-
-
-const stringifyObjects = (newElement, user) => {
+const display = (newElement, user) => {
     
     const userKeys = Object.keys(user) // array of keys
 
@@ -59,9 +47,8 @@ const stringifyObjects = (newElement, user) => {
         if ( (typeof user[userKeys[i]] != "object") || (user[userKeys[i]] == null) || (user[userKeys[i]] == undefined) ) {
             console.log(`String key: ${userKeys[i]}: ${user[userKeys[i]]}`)
             newElement.innerText = `${newElement.innerText} \n ${userKeys[i]}: ${user[userKeys[i]]}`
-            document.getElementById("users").appendChild(newElement)
         } else {
-            stringifyObjects(newElement, user[userKeys[i]])
+            display(newElement, user[userKeys[i]])
         }
     }
 
